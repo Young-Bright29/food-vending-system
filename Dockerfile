@@ -19,9 +19,10 @@ COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
 COPY . .
 
 RUN composer install --no-dev --optimize-autoloader
+RUN composer require resend/resend-laravel
 
 
-
+RUN php artisan vendor:publish --provider="Resend\Laravel\ResendServiceProvider"
 RUN php artisan storage:link || true
 
 RUN chmod -R 775 storage bootstrap/cache

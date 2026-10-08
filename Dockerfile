@@ -20,8 +20,7 @@ COPY . .
 
 RUN composer install --no-dev --optimize-autoloader
 
-RUN npm install
-RUN npm run build
+
 
 RUN php artisan storage:link || true
 
@@ -30,3 +29,6 @@ RUN chmod -R 775 storage bootstrap/cache
 EXPOSE 10000
 
 CMD php artisan serve --host=0.0.0.0 --port=${PORT:-10000}
+
+RUN npm install
+RUN npm run build

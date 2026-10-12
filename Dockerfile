@@ -33,7 +33,7 @@ COPY . .
 RUN composer install --no-dev --optimize-autoloader
 
 # Set permissions for Laravel storage and bootstrap cache
-RUN chown -R nw:nw /var/www/html/storage /var/www/html/bootstrap/cache
+# RUN chown -R nw:nw /var/www/html/storage /var/www/html/bootstrap/cache
 
 RUN php artisan storage:link || true
 

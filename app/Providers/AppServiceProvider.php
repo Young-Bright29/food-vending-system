@@ -4,9 +4,11 @@ namespace App\Providers;
 
 use Illuminate\Support\ServiceProvider;
 
+use Illuminate\Support\Facades\URL;
+use Illuminate\Support\Facades\App;
+
 use Illuminate\Support\Facades\Mail;
 use Resend\Laravel\Mail\ResendTransportFactory;
-
 
 class AppServiceProvider extends ServiceProvider
 {

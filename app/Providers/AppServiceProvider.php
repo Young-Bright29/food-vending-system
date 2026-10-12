@@ -29,5 +29,9 @@ class AppServiceProvider extends ServiceProvider
         // Mail::extend('resend', function (array $config) {
         //     return (new ResendTransportFactory)->create($config);
         // });
+
+    if (App::environment('production')) {
+        URL::forceScheme('https');
+    }
     }
 }

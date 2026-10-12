@@ -1,3 +1,18 @@
+FROM richarvey/nginx-php-fpm:latest
+
+# Copy your Laravel project files into the container
+COPY . /var/www/html
+
+# Set the web root directory to Laravel's public folder
+ENV WEBROOT /var/www/html/public
+ENV APP_ENV production
+ENV REPO_TYPE git
+
+# Run composer to install dependencies without development tools
+# RUN composer install --no-dev --optimize-autoloader
+
+
+
 FROM php:8.3-cli
 
 WORKDIR /var/www/html
@@ -16,6 +31,9 @@ COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
 COPY . .
 
 RUN composer install --no-dev --optimize-autoloader
+
+# Set permissions for Laravel storage and bootstrap cache
+RUN chown -R nw:nw /var/www/html/storage /var/www/html/bootstrap/cache
 
 RUN php artisan storage:link || true
 

@@ -85,12 +85,12 @@ class VendorController extends Controller
     {
         $vendorId = Auth::user()->vendor->id;
 
-        $orders = Order::whereHas('items.food', function ($query) {
-            $query->where('vendor_id', auth()->id());
-        })
-        ->with(['user', 'items.food'])
-        ->latest()
-        ->paginate(10);
+$orders = Order::whereHas('items.food', function ($query) use ($vendorId) {
+    $query->where('vendor_id', $vendorId);
+})
+->with(['user', 'items.food'])
+->latest()
+->paginate(10);
 
         return view('vendor.orders.index', compact('orders'));
     }

@@ -32,7 +32,6 @@ COPY . .
 
 RUN composer install --no-dev --optimize-autoloader
 
-RUN composer require brevo/symfony-brevo-mailer
 
 
 # Set permissions for Laravel storage and bootstrap cache

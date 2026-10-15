@@ -36,10 +36,9 @@ class AppServiceProvider extends ServiceProvider
                     'brevo+api',
                     'default',
                     $config['key'] ?? env('BREVO_API_KEY')
-                    )
-                );
+                )
             );
-    }
+        });
         // Register the resend mail driver
         // Mail::extend('resend', function (array $config) {
         //     return (new ResendTransportFactory)->create($config);

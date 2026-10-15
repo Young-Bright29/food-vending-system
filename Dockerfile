@@ -42,6 +42,9 @@ RUN composer update --no-dev --optimize-autoloader --no-interaction
 
 RUN php artisan storage:link || true
 
+RUN php artisan make:notifications-table
+RUN php artisan make:notification NewOrderForVendor
+
 RUN chmod -R 775 storage bootstrap/cache
 
 EXPOSE 10000

@@ -95,7 +95,10 @@ class OrderController extends Controller
 
         $orderId = $payment['metadata']['order_id'];
 
-        $order = Order::find($orderId);
+        // $order = Order::find($orderId);
+
+        $order = Order::with(['user', 'items.food.vendor.user'])->findOrFail($orderId);
+        $wasAlreadyPaid = $order->payment_status === 'paid';
 
         if ($payment['status'] == 'success') {
 

@@ -118,4 +118,37 @@ class VendorController extends Controller
             ->back()
             ->with('success', 'Order status updated successfully.');
     }
+
+    public function markNotificationRead(
+    Request $request,
+    string $notificationId
+) {
+    $notification = $request->user()
+        ->notifications()
+        ->where('id', $notificationId)
+        ->firstOrFail();
+
+    $notification->markAsRead();
+
+    return response()->json([
+        'success' => true,
+        'unread_count' => $request->user()
+            ->unreadNotifications()
+            ->count(),
+    ]);
+}
+
+public function markAllNotificationsRead(Request $request)
+{
+    $request->user()
+        ->unreadNotifications()
+        ->update([
+            'read_at' => now(),
+        ]);
+
+    return response()->json([
+        'success' => true,
+        'unread_count' => 0,
+    ]);
+}
 }

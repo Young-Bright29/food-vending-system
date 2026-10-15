@@ -39,6 +39,7 @@ class AppServiceProvider extends ServiceProvider
                     )
                 );
             );
+    }
         // Register the resend mail driver
         // Mail::extend('resend', function (array $config) {
         //     return (new ResendTransportFactory)->create($config);

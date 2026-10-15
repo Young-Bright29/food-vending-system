@@ -32,7 +32,9 @@ COPY . .
 
 # RUN composer install --no-dev --optimize-autoloader
 
-RUN composer install --no-dev --optimize-autoloader --ignore-platform-reqs
+# RUN composer install --no-dev --optimize-autoloader --ignore-platform-reqs
+
+RUN composer update --no-dev --optimize-autoloader --no-interaction
 
 
 # Set permissions for Laravel storage and bootstrap cache

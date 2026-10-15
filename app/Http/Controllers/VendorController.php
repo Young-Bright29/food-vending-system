@@ -84,8 +84,7 @@ class VendorController extends Controller
     public function orders()
     {
         $vendorId = Auth::user()->vendor->id;
-
-$orders = Order::whereHas('items.food', function ($query) use ($vendorId) {
+        $orders = Order::whereHas('items.food', function ($query) use ($vendorId) {
     $query->where('vendor_id', $vendorId);
 })
 ->with(['user', 'items.food'])

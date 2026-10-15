@@ -44,11 +44,12 @@ RUN php artisan storage:link || true
 
 # RUN php artisan make:notifications-table
 # RUN php artisan make:notification NewOrderForVendor
-RUN php artisan migrate
+# Migrations will run when the container starts
 
 RUN chmod -R 775 storage bootstrap/cache
 
 EXPOSE 10000
 
-CMD php artisan serve --host=0.0.0.0 --port=${PORT:-10000}
+# CMD php artisan serve --host=0.0.0.0 --port=${PORT:-10000}
 
+CMD ["sh", "-c", "php artisan migrate --force && php artisan serve --host=0.0.0.0 --port=${PORT:-10000}"]

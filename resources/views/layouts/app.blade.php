@@ -95,6 +95,99 @@
                                 <i class="fas fa-plus-circle"></i> Orders
                             </a>
                         </li>
+                        
+                        @php
+    $vendorUnreadNotifications = auth()->user()
+        ->unreadNotifications()
+        ->latest()
+        ->take(5)
+        ->get();
+
+    $vendorUnreadCount = auth()->user()
+        ->unreadNotifications()
+        ->count();
+@endphp
+
+<li class="nav-item dropdown">
+
+    <a class="nav-link dropdown-toggle position-relative"
+       href="#"
+       role="button"
+       data-bs-toggle="dropdown"
+       aria-expanded="false">
+
+        <i class="fas fa-bell"></i> Notifications
+
+        @if($vendorUnreadCount > 0)
+            <span id="vendor-notification-count"
+                  class="badge bg-danger rounded-pill">
+                {{ $vendorUnreadCount }}
+            </span>
+        @endif
+
+    </a>
+
+    <div class="dropdown-menu dropdown-menu-end p-0"
+         style="min-width: 320px; max-width: 380px;">
+
+        <div class="d-flex justify-content-between align-items-center
+                    px-3 py-2 border-bottom">
+
+            <strong>Notifications</strong>
+
+            @if($vendorUnreadCount > 0)
+                <button type="button"
+                        id="mark-all-vendor-notifications-read"
+                        class="btn btn-sm btn-link">
+                    Mark all read
+                </button>
+            @endif
+
+        </div>
+
+        @forelse($vendorUnreadNotifications as $notification)
+
+            <button type="button"
+                    class="dropdown-item py-2 vendor-notification-item"
+                    data-read-url="{{ route(
+                        'vendor.notifications.read',
+                        $notification->id
+                    ) }}"
+                    data-target-url="{{ $notification->data['url']
+                        ?? url('/vendor/orders') }}">
+
+                <div class="fw-semibold">
+                    {{ $notification->data['title'] ?? 'Notification' }}
+                </div>
+
+                <small class="text-muted">
+                    {{ $notification->data['message']
+                        ?? 'You have a new notification.' }}
+                </small>
+
+                <small class="d-block text-muted">
+                    {{ $notification->created_at->diffForHumans() }}
+                </small>
+
+            </button>
+
+        @empty
+
+            <div class="px-3 py-3 text-muted small">
+                You're all caught up.
+            </div>
+
+        @endforelse
+
+        <a href="{{ route('vendor.orders') }}"
+           class="dropdown-item text-center border-top">
+            View Orders
+        </a>
+
+    </div>
+
+</li>
+                
 
                     @endif
 
@@ -319,7 +412,69 @@
             }
 
         });
+        
+        // Mark a notification as read and navigate to the orders page.
+        $(document).on('click', '.vendor-notification-item', function () {
+
+        const item = $(this);
+
+        $.ajax({
+            url: item.data('read-url'),
+            type: 'POST',
+
+            headers: {
+                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content'),
+                'Accept': 'application/json'
+            },
+
+            success: function () {
+                window.location.href = item.data('target-url');
+            },
+
+            error: function () {
+                showToast(
+                    'Unable to update notification. Please try again.',
+                    'danger'
+                );
+            }
+        });
+
     });
+
+    // Mark every notification as read.
+    $(document).on(
+        'click',
+        '#mark-all-vendor-notifications-read',
+        function (e) {
+
+            e.preventDefault();
+            e.stopPropagation();
+
+            $.ajax({
+                url: "{{ route('vendor.notifications.readAll') }}",
+                type: 'POST',
+
+                headers: {
+                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content'),
+                    'Accept': 'application/json'
+                },
+
+                success: function () {
+                    window.location.reload();
+                },
+
+                error: function () {
+                    showToast(
+                        'Unable to update notifications.',
+                        'danger'
+                    );
+                }
+            });
+
+        }
+    );
+
+});
 
     function showToast(message, type) {
         const $toast = $('#toast');

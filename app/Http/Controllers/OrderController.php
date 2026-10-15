@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Notifications\NewOrderForVendor;
+
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Http;
@@ -102,6 +104,42 @@ class OrderController extends Controller
             $order->payment_reference = $reference;
             $order->save();
 
+            // Notify vendors only on the first successful payment.
+if (!$wasAlreadyPaid) {
+
+    $order->load([
+        'user',
+        'items.food.vendor.user',
+    ]);
+
+    // Group the ordered foods by their respective vendors.
+    $itemsByVendor = $order->items
+        ->filter(function ($item) {
+            return $item->food
+                && $item->food->vendor
+                && $item->food->vendor->user;
+        })
+        ->groupBy(function ($item) {
+            return $item->food->vendor->id;
+        });
+
+    foreach ($itemsByVendor as $vendorItems) {
+
+        $vendorUser = $vendorItems
+            ->first()
+            ->food
+            ->vendor
+            ->user;
+
+        $vendorUser->notify(
+            new NewOrderForVendor(
+                $order,
+                $vendorItems,
+                $order->user?->name ?? 'Customer'
+            )
+        );
+    }
+}
             Cart::where('user_id', $order->user_id)->delete();
 
             return redirect('/customer/orders')

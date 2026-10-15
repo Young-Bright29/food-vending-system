@@ -42,8 +42,8 @@ RUN composer update --no-dev --optimize-autoloader --no-interaction
 
 RUN php artisan storage:link || true
 
-# RUN php artisan make:notifications-table
-# RUN php artisan make:notification NewOrderForVendor
+RUN php artisan make:notifications-table
+RUN php artisan make:notification NewOrderForVendor
 # Migrations will run when the container starts
 
 RUN chmod -R 775 storage bootstrap/cache

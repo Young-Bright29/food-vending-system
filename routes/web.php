@@ -140,9 +140,15 @@ Route::middleware(['auth', 'verified', 'role:vendor'])->prefix('vendor')->group(
     Route::get('/foods/delete/{id}', [FoodController::class, 'destroy']);
     Route::get('/vendor/foods/edit/{id}', [FoodController::class, 'edit'])->name('vendor.foods.edit');
     Route::post('/vendor/foods/update/{id}', [FoodController::class, 'update'])->name('vendor.foods.update');
-
+    Route::post(
+        '/notifications/{notificationId}/read', 
+        [VendorController::class, 'markNotificationRead']
+    )->name('vendor.notifications.read');
+    Route::post(
+        '/notifications/read-all',
+        [VendorController::class, 'markAllNotificationsRead']
+    )->name('vendor.notifications.readAll');
 });
-
 Route::middleware(['auth', 'verified', 'role:customer'])->prefix('customer')->group(function () {
     Route::get('/home', [CustomerController::class, 'index']);
     Route::get('/home', [FoodController::class, 'customerView']);

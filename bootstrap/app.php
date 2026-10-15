@@ -15,6 +15,10 @@ return Application::configure(basePath: dirname(__DIR__))
             'role' => \App\Http\Middleware\RoleMiddleware::class,
         ]);
     })
+    ->withMiddleware(function (Middleware $middleware) {
+        // Fixes the "Invalid Signature" error on Render free tier
+        $middleware->trustProxies(at: '*');
+    })
     ->withExceptions(function (Exceptions $exceptions): void {
         //
     })->create();
